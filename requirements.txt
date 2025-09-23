@@ -1,0 +1,21 @@
+langchain>=0.2
+langgraph>=0.2
+langchain-community>=0.2
+langchain-text-splitters>=0.2
+pydantic>=2
+langchain-openai
+langchain-google-genai
+google-generativeai
+langchain-deepseek
+langchain-xai
+chromadb
+faiss-cpu; platform_system != "Windows"   # FAISS not available on Windows via pip
+pypdf
+pandas>=2
+numpy>=1.26
+tavily-python
+wikipedia
+arxiv
+python-dotenv
+matplotlib>=3.8
+langchain-experimental
