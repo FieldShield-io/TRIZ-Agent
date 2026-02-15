@@ -1,0 +1,99 @@
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#1a1a2e', 'primaryTextColor': '#e0e0e0', 'primaryBorderColor': '#16213e', 'lineColor': '#0f3460', 'secondaryColor': '#16213e', 'tertiaryColor': '#1a1a2e', 'background': '#0a0a1a'}}}%%
+graph TB
+    subgraph EXISTING["EXISTING TRIZ AGENTS (MIT License)"]
+        direction TB
+        START((START)) --> PM[🎯 Project Manager<br/>Supervisor Router]
+        
+        PM -->|routes| TRIZ[🔬 TRIZ Specialist<br/>Contradiction Matrix<br/>40 Inventive Principles<br/>39 Features List<br/>TRIZ RAG]
+        PM -->|routes| ME[⚙️ Mechanical<br/>Engineer]
+        PM -->|routes| EE[⚡ Electrical<br/>Engineer]
+        PM -->|routes| CSE[🎛️ Control Systems<br/>Engineer]
+        PM -->|routes| SE[🛡️ Safety<br/>Engineer]
+        PM -->|routes| OPS[🔧 Operations<br/>Specialist]
+        PM -->|routes| DOC[📝 Documentation<br/>Specialist]
+        
+        TRIZ -->|done| PM
+        ME -->|done| PM
+        EE -->|done| PM
+        CSE -->|done| PM
+        SE -->|done| PM
+        OPS -->|done| PM
+        DOC -->|writes step| DEL[🗑️ delete_messages<br/>Trim Context]
+        DEL -->|loop| PM
+        
+        PM -->|FINISH| FRM[📄 Final Report<br/>Maker]
+        FRM --> ENDNODE((END))
+    end
+
+    subgraph EXTENSIONS["FIELD SHIELD EXTENSIONS (New)"]
+        direction TB
+        AG[🌾 AgTech Domain<br/>Expert<br/>Wildlife behavior<br/>Crop economics<br/>Field conditions]
+        TH[🌡️ Thermal Mgmt<br/>Engineer<br/>Jetson thermals<br/>Sealed enclosures<br/>Solar loading]
+        EMB[🖥️ Embedded Systems<br/>Architect<br/>Jetson optimization<br/>ZeroMQ messaging<br/>Power budgeting]
+        COST[💰 Cost Analyst<br/>BOM estimation<br/>Manufacturing cost<br/>Grant alignment]
+        VAL[✅ Validation<br/>Engineer<br/>Hard constraints<br/>Power/weight/temp<br/>Pass/fail gates]
+    end
+
+    subgraph TOOLS["ENHANCED TOOL SET"]
+        direction TB
+        T1[📚 Field Shield<br/>Spec RAG]
+        T2[🔍 Component<br/>Lookup]
+        T3[⚠️ Constraint<br/>Validator]
+        T4[📊 Cost<br/>Database]
+    end
+
+    subgraph HITL["HUMAN-IN-THE-LOOP GATES"]
+        direction TB
+        H1[🔴 Gate 1<br/>Approve Contradiction<br/>Framing]
+        H2[🔴 Gate 2<br/>Approve Solution<br/>Direction]
+        H3[🔴 Gate 3<br/>Final Review &<br/>IP Documentation]
+    end
+
+    PM -.->|new routes| AG
+    PM -.->|new routes| TH
+    PM -.->|new routes| EMB
+    PM -.->|new routes| COST
+    PM -.->|new routes| VAL
+    
+    AG -.->|done| PM
+    TH -.->|done| PM
+    EMB -.->|done| PM
+    COST -.->|done| PM
+    VAL -.->|done| PM
+
+    T1 -.-> AG
+    T1 -.-> TH
+    T1 -.-> EMB
+    T2 -.-> COST
+    T3 -.-> VAL
+    T4 -.-> COST
+
+    TRIZ -.->|after| H1
+    VAL -.->|after| H2
+    FRM -.->|before END| H3
+
+    style EXISTING fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#e0e0e0
+    style EXTENSIONS fill:#16213e,stroke:#e94560,stroke-width:2px,stroke-dasharray: 5 5,color:#e0e0e0
+    style TOOLS fill:#1a1a2e,stroke:#533483,stroke-width:2px,stroke-dasharray: 5 5,color:#e0e0e0
+    style HITL fill:#1a1a2e,stroke:#e94560,stroke-width:2px,stroke-dasharray: 5 5,color:#e0e0e0
+    
+    style PM fill:#e94560,stroke:#e94560,color:#fff
+    style TRIZ fill:#0f3460,stroke:#0f3460,color:#fff
+    style ME fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style EE fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style CSE fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style SE fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style OPS fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style DOC fill:#16213e,stroke:#16213e,color:#e0e0e0
+    style FRM fill:#533483,stroke:#533483,color:#fff
+    style DEL fill:#1a1a2e,stroke:#0f3460,color:#e0e0e0
+    
+    style AG fill:#e94560,stroke:#e94560,color:#fff
+    style TH fill:#e94560,stroke:#e94560,color:#fff
+    style EMB fill:#e94560,stroke:#e94560,color:#fff
+    style COST fill:#e94560,stroke:#e94560,color:#fff
+    style VAL fill:#e94560,stroke:#e94560,color:#fff
+    
+    style H1 fill:#533483,stroke:#e94560,color:#fff
+    style H2 fill:#533483,stroke:#e94560,color:#fff
+    style H3 fill:#533483,stroke:#e94560,color:#fff
