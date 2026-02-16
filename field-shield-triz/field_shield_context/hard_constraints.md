@@ -1,47 +1,69 @@
-# Field Shield — Hard Engineering Constraints
+# Field Shield — Engineering & Economic Constraints
 
-## Power Budget
+## Primary Economic Constraint (BINDING)
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Average power | ≤ 15W | Solar/battery budget for 24hr operation |
-| Peak power | ≤ 60W | During deterrent + AI + pan-tilt simultaneous |
-| Standby power | ≤ 8W (target) | Nighttime idle surveillance |
+| Cost per acre per year | ≤ $100/acre/year | The single most important constraint. ALL designs must meet this. |
+| Standard block size | 50 acres | Primary design unit for costing and coverage |
+| Annual block cost | ≤ $5,000/year | 50 acres × $100/acre |
 
-## Physical
+## Capital & Operating Budget
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Total weight | ≤ 25 lbs | Single-person installation |
-| Payload weight | ≤ 12 lbs | Pan-tilt mechanism limit |
+| Capital equipment (5yr amortization) | ≤ $15,000 total | $3,000/year × 5 years for a 50-acre block |
+| Capital equipment (3yr amortization) | ≤ $9,000 total | $3,000/year × 3 years for a 50-acre block |
+| Annual operating cost | ≤ $2,000/year | Maintenance, consumables, connectivity, power |
+| Installation cost | ≤ $2,000 one-time | Professional or farmer-installed |
+| Farmer ROI payback | ≤ 2 years | Based on crop damage prevented vs. total cost |
+
+## Scalability
+| Parameter | Limit | Notes |
+|-----------|-------|-------|
+| Cost scaling | Sub-linear preferred | Adding 50 more acres should cost < 2× first 50 |
+| Coverage completeness | ≥ 90% of block area | Gaps in coverage will be exploited by wildlife |
+| Node/unit density | Minimize | Fewer nodes = lower maintenance burden |
 
 ## Environmental
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Operating temp | -20°C to 60°C | Continental US four-season |
-| IP rating | ≥ IP65 | Dust-tight + water jet protection |
-| Wind survival | ≥ 50 mph gusts | Agricultural field conditions |
+| Operating temp range | -20°C to 50°C | Continental US four-season agriculture |
+| Weather resistance | Rain, snow, dust, UV | Multi-year outdoor deployment |
+| Wind survival | ≥ 50 mph gusts | Open agricultural field conditions |
 
-## Performance
+## Performance — Detection
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Detection range | ≥ 200m | Deer-sized (1.5m) targets |
-| Response time | ≤ 2s | Detection → deterrent activation |
-| Classification accuracy | ≥ 90% | Deer/hog vs. human/vehicle/livestock |
-| False positive rate | ≤ 5% | Farmer tolerance threshold |
+| Detection range | ≥ 100m per node (soft) | Longer range = fewer nodes = lower cost |
+| Response time | ≤ 5s detection to deterrent | Slower acceptable if deterrent is highly effective |
+| Classification accuracy | ≥ 85% | Distinguish target species from humans/livestock/vehicles |
+| False positive rate | ≤ 10% | Farmer tolerance for nuisance activations |
 
-## Compute
+## Performance — Deterrent
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Jetson TDP | ≤ 15W | Orin Nano max power mode |
-| Inference FPS | ≥ 5 fps | Minimum for reliable tracking |
+| Anti-habituation duration | ≥ 1 full growing season | Minimum 4-6 months effective without performance decay |
+| Species coverage | Deer + hogs minimum | Birds as bonus capability |
+| Human/livestock safety | Zero harm | System must never injure people or farm animals |
+| Regulatory compliance | No restricted chemicals/frequencies | Must comply with EPA, FIFRA, FCC, state wildlife regs |
 
-## Cost
+## Power & Infrastructure
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| Unit BOM cost | ≤ $2,500 | Target retail $4,000-$5,000 |
-| Annual operating | ≤ $200/yr | Connectivity + maintenance |
+| Power source | Mains/grid preferred | Commercial farms have grid power available |
+| Solar/battery acceptable | Yes, if cost target met | Not excluded, but not required |
+| Infrastructure dependency | Document clearly | If solution requires irrigation/fencing, state it |
 
-## Acoustic Deterrent
+## Maintenance & Operations
 | Parameter | Limit | Notes |
 |-----------|-------|-------|
-| SPL at 100m | ≥ 70 dB | Audible/startling to deer |
-| Frequency range | 200-8,000 Hz | Deer hearing sensitivity |
+| Maintenance frequency | ≤ quarterly | Farmer time is scarce during growing season |
+| Maintenance skill level | General farm worker | No specialized technician required |
+| System lifetime | ≥ 5 years | Minimum for amortization model to work |
+| Seasonal deployment | Acceptable | System can be deployed/removed seasonally if needed |
+
+## Manufacturing & Supply Chain
+| Parameter | Limit | Notes |
+|-----------|-------|-------|
+| Component availability | No sole-source critical parts | Supply chain resilience |
+| Manufacturing complexity | Contract-manufacturable | Standard PCB assembly, injection molding, etc. |
+| Volume target | 100-1000 unit runs initially | Must be economical at relatively low volumes |

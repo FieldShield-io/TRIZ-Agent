@@ -1,0 +1,23 @@
+{
+  "cost_per_acre_year": 36.36,
+  "block_size": 50.0,
+  "capital_cost_50acre": 2850.0,
+  "annual_operating_cost": 1248.0,
+  "installation_cost": 300.0,
+  "roi_payback_years": 1.0,
+  "cost_scaling_factor": 1.63,
+  "coverage_completeness": 95.0,
+  "node_count_50acre": 100.0,
+  "operating_temp_min": -40.0,
+  "operating_temp_max": 60.0,
+  "wind_resistance": 60.0,
+  "detection_range": 5.0,
+  "response_time": 0.4,
+  "classification_accuracy": 70.0,
+  "false_positive_rate": 15.0,
+  "anti_habituation_months": 6.0,
+  "human_safety": 9.5,
+  "livestock_safety": 9.0,
+  "maintenance_visits_per_year": 12.0,
+  "system_lifetime": 5.0
+}

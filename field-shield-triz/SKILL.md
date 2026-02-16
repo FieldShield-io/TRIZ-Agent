@@ -1,21 +1,32 @@
 # Field Shield TRIZ Innovation Engine — Claude Desktop Skill
 
 ## Overview
-This skill orchestrates TRIZ-based innovation sessions for the Field Shield autonomous wildlife deterrence system. It replaces a LangGraph/Python multi-agent system with a Claude Desktop-native architecture using subagent Task dispatching, built-in web research, HITL (Human-in-the-Loop) gates via AskUserQuestion, and local TRIZ tooling.
+This skill orchestrates TRIZ-based novel concept research sessions for the Field Shield scalable wildlife deterrence platform. The primary mission is to **invent new, novel deterrent concepts** that meet a $100/acre/year cost target at 50-acre block scale, with built-in anti-habituation.
+
+The system replaces a LangGraph/Python multi-agent system with a Claude Desktop-native architecture using subagent Task dispatching, built-in web research, HITL (Human-in-the-Loop) gates via AskUserQuestion, and local TRIZ tooling.
 
 ## Architecture: Supervisor-Dispatched Agent Team
-Claude acts as the **Project Manager (orchestrator)**, dispatching work to specialist subagents via the Task tool. This mirrors the original TRIZ Agents' supervisor-routed pattern but runs natively in Claude Desktop without LangChain or LangGraph dependencies.
+Claude acts as the **Project Manager (orchestrator)**, dispatching work to specialist subagents via the Task tool.
 
 ```
 USER → Claude (PM/Orchestrator)
          ├─ dispatches → Task: TRIZ Specialist
-         ├─ dispatches → Task: Domain Engineers (Mechanical, Electrical, Embedded, Thermal)
+         ├─ dispatches → Task: Cross-Domain Researchers (Novel concept exploration)
+         ├─ dispatches → Task: Domain Engineers (Feasibility assessment)
          ├─ dispatches → Task: Field Shield Specialists (AgTech, Cost, Validation)
-         ├─ dispatches → Task: Safety / Operations / Control Systems
+         ├─ dispatches → Task: Safety / Operations
          ├─ dispatches → Task: Documentation Specialist
          ├─ dispatches → Task: Final Report Maker
          └─ HITL gates → AskUserQuestion at key decision points
 ```
+
+## Key Constraints (Memorize These)
+- **$100/acre/year** maximum total cost (amortized capex + opex)
+- **50-acre blocks** as the standard design unit ($5,000/year per block)
+- **Anti-habituation**: Must work for a full growing season (4-6 months) without decay
+- **Scalable**: Sub-linear cost scaling to hundreds of acres
+- **Mains power available**: Commercial farms have grid power — no solar/battery constraint
+- **Novel concepts**: The goal is INVENTION, not optimization of existing architectures
 
 ## Session Workflow
 
@@ -25,80 +36,92 @@ USER → Claude (PM/Orchestrator)
    - `field_shield_context/system_overview.md`
    - `field_shield_context/hard_constraints.md`
    - `field_shield_context/known_contradictions.md`
-3. Ask the user to define the specific design challenge for this session
+3. Ask the user to define the specific design challenge or research direction for this session
 4. Create a session directory: `sessions/YYYY-MM-DD-<challenge-slug>/`
 
-### PHASE 1: Problem Framing (TRIZ Analysis)
-**Agents**: TRIZ Specialist + AgTech Domain Expert
+### PHASE 1: Problem Framing & Cross-Domain Research
+**Agents**: TRIZ Specialist + AgTech Domain Expert + Cross-Domain Researchers
 
 1. **Dispatch TRIZ Specialist** (Task tool, subagent_type: "general-purpose"):
    - Prompt includes: the user's challenge + Field Shield context + TRIZ specialist prompt from `prompts/triz_specialist.md`
    - Agent runs `python tools/triz_toolkit.py field-shield` to see pre-mapped contradictions
    - Agent runs `python tools/triz_toolkit.py matrix "<improving>" "<worsening>"` for contradiction lookup
    - Agent runs `python tools/triz_toolkit.py principles <nums>` for principle details
-   - Agent performs web search for prior art
-   - Returns: contradiction pairs + recommended principles + prior art notes
+   - Agent performs web search for prior art in ADJACENT FIELDS (not just ag-tech)
+   - Returns: contradiction pairs + recommended principles + cross-domain inspiration
 
-2. **Dispatch AgTech Domain Expert** (Task tool, subagent_type: "general-purpose"):
-   - Prompt includes: TRIZ findings + AgTech prompt from `prompts/agtech_domain_expert.md`
-   - Agent validates contradiction framing against real agricultural conditions
-   - Agent researches wildlife behavior relevant to the specific challenge
-   - Returns: validated contradictions + agricultural context + deployment constraints
+2. **Dispatch Cross-Domain Researchers** (multiple Task tools in parallel):
+   Research novel approaches from adjacent fields that could inspire new deterrent concepts:
+   - **Biomimicry researcher**: How do ecosystems and natural predator-prey dynamics deter herbivores? What biological mechanisms prevent habituation?
+   - **Military/security researcher**: What non-lethal deterrence and area denial technologies exist? How do perimeter security systems handle large areas cheaply?
+   - **Behavioral science researcher**: What is known about animal learning, fear conditioning, and habituation resistance? What stimuli never habituate?
+   - **Infrastructure systems researcher**: What existing farm systems (irrigation, fencing, lighting, power grid) could be repurposed as deterrent delivery mechanisms?
 
-3. **HITL Gate 1** (AskUserQuestion):
-   - Present the contradiction framing to the user
-   - Options: "Approve and proceed" / "Modify contradictions" / "Add additional contradictions"
-   - Wait for human approval before solution generation
+3. **Dispatch AgTech Domain Expert** (Task tool):
+   - Validates findings against real agricultural conditions
+   - Grounds cross-domain inspiration in farmer operational reality
+   - Assesses which approaches would actually work in open fields
 
-### PHASE 2: Solution Generation (Domain Engineers)
-**Agents**: Varies by contradiction type — dispatch 2-4 relevant specialists
+4. **HITL Gate 1** (AskUserQuestion):
+   - Present the contradiction framing + cross-domain research findings
+   - Present 3-5 novel concept directions identified
+   - Options: "Approve directions and proceed" / "Modify focus areas" / "Add research directions"
 
-For each approved contradiction, dispatch relevant domain engineers in parallel:
+### PHASE 2: Novel Concept Development
+**Agents**: Varies by concept direction — dispatch 2-4 relevant specialists per concept
 
-4. **Dispatch Domain Engineers** (multiple Task tools in parallel):
-   - Each agent gets: contradiction details + relevant TRIZ principles + their role prompt + Field Shield context
-   - Each agent proposes 2-3 concrete solutions applying the TRIZ principles
-   - Agents may use web search for component research, material properties, etc.
+For each approved concept direction, dispatch relevant agents in parallel:
 
-   **Agent selection by contradiction type:**
-   - Thermal issues → Thermal Management Engineer + Embedded Systems Architect
-   - Power issues → Electrical Engineer + Embedded Systems Architect
-   - Mechanical issues → Mechanical Engineer + Operations Specialist
-   - Detection/AI issues → Embedded Systems Architect + Control Systems Engineer
-   - Deterrent issues → AgTech Expert + Control Systems Engineer + Safety Engineer
-   - Cost issues → Cost Analyst + Operations Specialist
+5. **Dispatch Concept Development Teams** (multiple Task tools in parallel):
+   - Each team gets: concept direction + relevant TRIZ principles + Field Shield context + constraints
+   - Each team develops the concept into a concrete, costed proposal
+   - Teams must address: detection method, deterrent mechanism, anti-habituation strategy, infrastructure requirements, cost estimate for 50-acre block
 
-5. **Consolidate solutions**: Collect all candidate solutions, merge overlapping concepts, identify synergies.
+   **Agent selection by concept type:**
+   - Physical deterrent (water, air, etc.) → Mechanical Engineer + Electrical Engineer + AgTech Expert
+   - Sensory deterrent (visual, olfactory, electromagnetic) → Control Systems Engineer + Safety Engineer + AgTech Expert
+   - Behavioral/AI deterrent → Embedded Systems Architect + Control Systems Engineer + AgTech Expert
+   - Infrastructure-integrated → Electrical Engineer + Operations Specialist + Cost Analyst
+   - Biological/ecological → AgTech Expert + Safety Engineer + Operations Specialist
+
+6. **Consolidate concepts**: Collect all developed concepts, identify synergies, merge overlapping ideas.
 
 ### PHASE 3: Validation & Cost Analysis
-**Agents**: Validation Engineer + Cost Analyst
+**Agents**: Validation Engineer + Cost Analyst + Safety Engineer
 
-6. **Dispatch Validation Engineer** (Task tool):
-   - Prompt includes: all candidate solutions + validation prompt + hard constraints
-   - Agent runs `python tools/constraint_validator.py check <solution.json>` for each candidate
-   - Returns: PASS/FAIL/WARN for each solution with margin analysis
+7. **Dispatch Validation Engineer** (Task tool):
+   - Prompt includes: all developed concepts + validation prompt + constraints
+   - Agent runs `python tools/constraint_validator.py check <solution.json>` for each concept
+   - KEY FOCUS: Does this hit $100/acre/year? Does it scale? Does it resist habituation?
+   - Returns: PASS/FAIL/WARN for each concept with margin analysis
 
-7. **Dispatch Cost Analyst** (Task tool):
-   - Prompt includes: surviving solutions + cost analyst prompt + baseline BOM
-   - Agent estimates BOM impact, manufacturing cost, and farmer ROI
-   - Returns: cost analysis for each viable solution
+8. **Dispatch Cost Analyst** (Task tool):
+   - Prompt includes: surviving concepts + cost analyst prompt
+   - Agent estimates: capital cost per 50-acre block, annual operating cost, cost per acre per year
+   - Agent calculates: amortization over 3yr and 5yr, scaling cost for 100+ acres
+   - Returns: detailed cost analysis for each viable concept
 
-8. **HITL Gate 2** (AskUserQuestion):
-   - Present validated + costed solutions in a ranked table
-   - Options: "Approve top solution(s)" / "Request deeper analysis" / "Reject and re-generate" / "Combine solutions"
+9. **Dispatch Safety Engineer** (Task tool):
+   - Reviews all concepts for human/livestock safety, regulatory compliance
+   - Flags any concepts with regulatory barriers (FIFRA, EPA, FCC, state wildlife regs)
+
+10. **HITL Gate 2** (AskUserQuestion):
+    - Present validated + costed concepts in a ranked table
+    - Show cost/acre/year for each concept
+    - Options: "Approve top concept(s)" / "Request deeper analysis" / "Reject and explore new directions" / "Combine concepts"
 
 ### PHASE 4: Documentation & Final Report
 **Agents**: Documentation Specialist + Final Report Maker
 
-9. **Dispatch Documentation Specialist** (Task tool):
-   - Compile all phase outputs into structured documentation
-   - Mark human contribution points for IP trail
+11. **Dispatch Documentation Specialist** (Task tool):
+    - Compile all phase outputs into structured documentation
+    - Mark human contribution points for IP trail
 
-10. **Dispatch Final Report Maker** (Task tool):
-    - Compile the complete innovation report following the template in `prompts/final_report_maker.md`
+12. **Dispatch Final Report Maker** (Task tool):
+    - Compile the complete innovation report following the template
     - Write to `sessions/<session-dir>/innovation_report.md`
 
-11. **HITL Gate 3** (AskUserQuestion):
+13. **HITL Gate 3** (AskUserQuestion):
     - Present the final report summary
     - Options: "Approve for prototyping" / "Send back for iteration" / "Archive for future reference"
 
@@ -120,7 +143,7 @@ python field-shield-triz/tools/triz_toolkit.py field-shield detection_range  # S
 python field-shield-triz/tools/triz_toolkit.py all-principles               # List all 40 principles
 ```
 
-### Constraint Validator (Python CLI)
+### Constraint Validator (Python CLI) — v2
 Location: `field-shield-triz/tools/constraint_validator.py`
 ```bash
 python field-shield-triz/tools/constraint_validator.py constraints  # Show all constraints
@@ -128,9 +151,19 @@ python field-shield-triz/tools/constraint_validator.py template     # Blank JSON
 python field-shield-triz/tools/constraint_validator.py check solution.json  # Validate proposal
 ```
 
+Key constraints validated:
+- cost_per_acre_year (≤$100)
+- capital_cost_50acre (≤$15,000)
+- annual_operating_cost (≤$2,000/year)
+- anti_habituation_months (≥4 months)
+- coverage_completeness (≥90%)
+- system_lifetime (≥5 years)
+- Plus environmental, detection, deterrent, and operations constraints
+
 ### Web Research
 Use built-in WebSearch and WebFetch tools for:
-- Prior art research
+- Cross-domain technology scouting (military, security, biomimicry, behavioral science)
+- Prior art and patent landscape research
 - Component datasheets and pricing
 - Wildlife behavior studies
 - Agricultural technology benchmarks
@@ -146,12 +179,19 @@ Task tool:
     [Read and include contents of prompts/<role>.md]
 
     CONTEXT:
-    [Field Shield system overview]
+    [Field Shield system overview — architecture-agnostic, $100/acre/year target]
     [Current challenge description]
     [TRIZ analysis results so far]
 
     YOUR TASK:
     [Specific assignment for this phase]
+
+    KEY CONSTRAINTS:
+    - $100/acre/year maximum (50-acre blocks = $5,000/year)
+    - Anti-habituation: must work full growing season
+    - Scalable to 100+ acres with sub-linear cost
+    - Mains power available (no solar/battery constraint)
+    - NOVEL CONCEPTS: invent new approaches, don't optimize old ones
 
     TOOLS AVAILABLE:
     - Run bash commands for TRIZ toolkit and constraint validator
@@ -163,40 +203,46 @@ Task tool:
 ```
 
 ### Parallel Dispatch (multiple agents simultaneously)
-When dispatching domain engineers in Phase 2, launch multiple Task tools in a single message to run agents concurrently. Each agent works independently on the same contradiction from their domain perspective.
+When dispatching researchers in Phase 1 or concept developers in Phase 2, launch multiple Task tools in a single message to run agents concurrently.
 
-## Key Differences from Original TRIZ Agents
-
-| Feature | Original (LangGraph) | Claude Desktop Optimized |
-|---------|----------------------|--------------------------|
-| Orchestrator | LangGraph StateGraph + PM agent | Claude main thread as PM |
-| Agent dispatch | Graph node routing | Task tool subagents |
-| TRIZ tools | LangChain @tool wrappers | Python CLI scripts (bash) |
-| Web search | Tavily LangChain tool | Built-in WebSearch/WebFetch |
-| HITL gates | Not implemented | AskUserQuestion tool |
-| Memory management | delete_messages + steps_documentation | Subagent isolation (natural) |
-| LLM provider | OpenAI/Gemini/DeepSeek via langchain | Claude (native, no API key) |
-| Prompt management | LangChain Hub (external) | Local markdown files |
-| Cross-agent consult | Not possible (hub-and-spoke only) | Task tool with combined prompts |
-| Output | Text files via write_document | Markdown/DOCX with file links |
-| Evaluation | Multi-judge LLM scoring | Constraint validator + human review |
+### Cross-Domain Research Dispatch
+New in v2 — Phase 1 now includes parallel research across adjacent fields:
+- Biomimicry / natural deterrence mechanisms
+- Military / security area denial
+- Behavioral science / habituation research
+- Agricultural infrastructure repurposing
 
 ## Session Output Structure
 ```
 sessions/YYYY-MM-DD-<challenge>/
 ├── session_log.md              # Chronological log of all agent dispatches
 ├── phase1_triz_analysis.md     # Contradiction analysis + principles
+├── phase1_cross_domain_research.md  # Findings from adjacent fields
 ├── phase1_agtech_context.md    # Agricultural grounding
-├── phase2_solutions/
-│   ├── solution_1.md           # Per-solution write-ups
-│   ├── solution_2.md
-│   └── solution_3.md
+├── phase2_concepts/
+│   ├── concept_1.md            # Per-concept detailed write-ups
+│   ├── concept_2.md
+│   └── concept_3.md
 ├── phase3_validation.md        # Constraint validation results
-├── phase3_cost_analysis.md     # Cost analysis
+├── phase3_cost_analysis.md     # Cost analysis per concept
+├── phase3_safety_review.md     # Safety and regulatory review
 ├── innovation_report.md        # Final comprehensive report
 ├── ip_documentation.md         # IP trail documentation
 └── constraint_checks/
-    ├── solution_1.json         # Constraint validator input/output
-    ├── solution_2.json
-    └── solution_3.json
+    ├── concept_1.json          # Constraint validator input/output
+    ├── concept_2.json
+    └── concept_3.json
 ```
+
+## Key Differences from v1 (Original Architecture)
+
+| Feature | v1 (Solar/Battery/Acoustic) | v2 (Novel Concept Research) |
+|---------|---------------------------|---------------------------|
+| Goal | Optimize existing architecture | Invent new deterrent concepts |
+| Cost target | $2,500 BOM per unit | $100/acre/year for 50-acre blocks |
+| Power | Solar/battery constrained (≤15W) | Mains power available |
+| Deterrent | Acoustic (habituates in 2-4 weeks) | Novel, anti-habituation required |
+| Scale | Single unit, single field | 50-acre blocks, scalable to 100s |
+| Research | Engineering optimization | Cross-domain innovation scouting |
+| Phase 1 | TRIZ only | TRIZ + cross-domain research |
+| Validation | 19 hardware constraints | 21 economic + performance constraints |

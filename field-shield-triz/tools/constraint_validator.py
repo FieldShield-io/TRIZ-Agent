@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Field Shield Constraint Validator
-===================================
-Validates proposed solutions against Field Shield's hard engineering constraints.
-Returns PASS/FAIL with detailed explanations.
+Field Shield Constraint Validator (v2 — Novel Concept Research)
+================================================================
+Validates proposed solutions against Field Shield's economic and engineering
+constraints for scalable wildlife deterrence at $100/acre/year.
 
 Usage:
     python constraint_validator.py validate                # Interactive mode
@@ -32,56 +32,93 @@ class Constraint:
 
 
 # ─────────────────────────────────────────────────────────────
-# Field Shield Hard Constraints
+# Field Shield Constraints — Novel Concept Research (v2)
+# Target: $100/acre/year, 50-acre blocks, scalable, anti-habituation
 # ─────────────────────────────────────────────────────────────
 CONSTRAINTS = [
-    # Power & Energy
+    # Economics (PRIMARY — the binding constraints)
     Constraint(
-        name="average_power",
-        description="Maximum average power consumption (solar/battery budget)",
-        unit="W",
-        max_value=15.0,
-        category="power",
+        name="cost_per_acre_year",
+        description="Maximum annual cost per acre (amortized capex + opex)",
+        unit="USD/acre/year",
+        max_value=100.0,
+        category="economics",
         severity="hard",
-        notes="System runs on 100W solar panel + 12V 100Ah battery. 15W average ensures 24hr operation with 5hr effective sun.",
+        notes="THE binding constraint. Capex amortized over system lifetime + annual operating costs.",
     ),
     Constraint(
-        name="peak_power",
-        description="Maximum peak power draw (inverter/regulator limit)",
-        unit="W",
-        max_value=60.0,
-        category="power",
+        name="block_size",
+        description="Standard coverage block size",
+        unit="acres",
+        min_value=50.0,
+        category="economics",
         severity="hard",
-        notes="Peak during deterrent activation + AI inference + pan-tilt movement.",
+        notes="The primary design unit. Solution must cover at least 50 contiguous acres.",
     ),
     Constraint(
-        name="standby_power",
-        description="Standby power during idle surveillance",
-        unit="W",
-        max_value=8.0,
-        category="power",
+        name="capital_cost_50acre",
+        description="Total capital equipment cost for a 50-acre block",
+        unit="USD",
+        max_value=15000.0,
+        category="economics",
+        severity="hard",
+        notes="At 5-year amortization: $3,000/year. At 3-year: max $9,000 total.",
+    ),
+    Constraint(
+        name="annual_operating_cost",
+        description="Annual operating cost per 50-acre block",
+        unit="USD/year",
+        max_value=2000.0,
+        category="economics",
+        severity="hard",
+        notes="Maintenance, consumables, power, connectivity. Must leave room for capex amortization within $5K/year total.",
+    ),
+    Constraint(
+        name="installation_cost",
+        description="One-time installation cost per 50-acre block",
+        unit="USD",
+        max_value=2000.0,
+        category="economics",
         severity="soft",
-        notes="Target for nighttime operation when solar is unavailable.",
+        notes="Professional or farmer-installed. Added to capex for amortization.",
+    ),
+    Constraint(
+        name="roi_payback_years",
+        description="Farmer ROI payback period",
+        unit="years",
+        max_value=2.0,
+        category="economics",
+        severity="soft",
+        notes="Based on crop damage prevented vs. total cost. Farmers need fast payback.",
     ),
 
-    # Weight & Size
+    # Scalability
     Constraint(
-        name="total_weight",
-        description="Maximum total system weight (including mount)",
-        unit="lbs",
-        max_value=25.0,
-        category="physical",
-        severity="hard",
-        notes="Must be installable by single person on standard T-post or tripod.",
+        name="cost_scaling_factor",
+        description="Cost multiplier for doubling acreage (1.0 = linear, <1.0 = sub-linear)",
+        unit="ratio",
+        max_value=2.0,
+        category="scalability",
+        severity="soft",
+        notes="Sub-linear scaling (<2.0) means adding 50 more acres costs less than the first 50. Target <1.7.",
     ),
     Constraint(
-        name="payload_weight",
-        description="Maximum sensor/electronics payload weight",
-        unit="lbs",
-        max_value=12.0,
-        category="physical",
+        name="coverage_completeness",
+        description="Percentage of block area effectively protected",
+        unit="%",
+        min_value=90.0,
+        category="scalability",
         severity="hard",
-        notes="Pan-tilt mechanism rated for 12 lbs max payload.",
+        notes="Gaps in coverage will be exploited by wildlife. 90% minimum.",
+    ),
+    Constraint(
+        name="node_count_50acre",
+        description="Number of nodes/units required per 50-acre block",
+        unit="nodes",
+        max_value=50.0,
+        category="scalability",
+        severity="soft",
+        notes="Fewer nodes = lower maintenance. Target <25. Hard limit 50 (1 per acre).",
     ),
 
     # Environmental
@@ -92,133 +129,112 @@ CONSTRAINTS = [
         min_value=-20.0,
         category="environmental",
         severity="hard",
-        notes="Must operate in northern US winter conditions.",
+        notes="Continental US winter conditions.",
     ),
     Constraint(
         name="operating_temp_max",
         description="Maximum operating temperature",
         unit="°C",
-        max_value=60.0,
+        max_value=50.0,
         category="environmental",
         severity="hard",
-        notes="Direct sun exposure in summer agricultural fields.",
-    ),
-    Constraint(
-        name="ip_rating",
-        description="Minimum IP ingress protection rating",
-        unit="IP",
-        min_value=65.0,
-        category="environmental",
-        severity="hard",
-        notes="IP65 minimum: dust-tight + protected against water jets. IP67 preferred.",
+        notes="Summer agricultural field conditions.",
     ),
     Constraint(
         name="wind_resistance",
-        description="Maximum wind speed for stable operation",
+        description="Minimum wind survival speed",
         unit="mph",
         min_value=50.0,
         category="environmental",
-        severity="soft",
-        notes="Must survive gusts; stable imaging up to 30mph.",
+        severity="hard",
+        notes="Open agricultural field wind conditions.",
     ),
 
-    # Performance
+    # Detection Performance
     Constraint(
         name="detection_range",
-        description="Minimum detection range for deer-sized targets",
+        description="Detection range per node for deer-sized targets",
         unit="m",
-        min_value=200.0,
-        category="performance",
-        severity="hard",
-        notes="Thermal camera must detect deer-sized (1.5m tall) targets at 200m minimum.",
+        min_value=50.0,
+        category="detection",
+        severity="soft",
+        notes="Longer range = fewer nodes needed. 50m minimum, 100m+ preferred.",
     ),
     Constraint(
         name="response_time",
-        description="Maximum time from detection to deterrent activation",
+        description="Time from detection to deterrent activation",
         unit="s",
-        max_value=2.0,
-        category="performance",
-        severity="hard",
-        notes="Includes AI classification + pan-tilt slew + deterrent trigger.",
+        max_value=5.0,
+        category="detection",
+        severity="soft",
+        notes="5s acceptable if deterrent is highly effective. <2s preferred.",
     ),
     Constraint(
         name="classification_accuracy",
-        description="Minimum target classification accuracy",
+        description="Target species classification accuracy",
         unit="%",
-        min_value=90.0,
-        category="performance",
+        min_value=85.0,
+        category="detection",
         severity="hard",
-        notes="Must distinguish deer/hog from humans, vehicles, livestock.",
+        notes="Must distinguish deer/hogs from humans, livestock, vehicles.",
     ),
     Constraint(
         name="false_positive_rate",
         description="Maximum false positive rate",
         unit="%",
-        max_value=5.0,
-        category="performance",
+        max_value=10.0,
+        category="detection",
         severity="hard",
-        notes="Farmer tolerance threshold. Higher causes system distrust and disablement.",
+        notes="Farmer tolerance for nuisance activations. <5% preferred.",
     ),
 
-    # Cost
+    # Deterrent Effectiveness
     Constraint(
-        name="unit_bom_cost",
-        description="Maximum bill-of-materials cost per unit",
-        unit="USD",
-        max_value=2500.0,
-        category="cost",
+        name="anti_habituation_months",
+        description="Minimum months of sustained deterrent effectiveness",
+        unit="months",
+        min_value=4.0,
+        category="deterrent",
         severity="hard",
-        notes="Target retail price $4,000-$5,000 with 40-50% gross margin.",
+        notes="Must last one full growing season (4-6 months) without performance decay.",
     ),
     Constraint(
-        name="annual_operating_cost",
-        description="Maximum annual operating cost (connectivity, maintenance)",
-        unit="USD/year",
-        max_value=200.0,
-        category="cost",
+        name="human_safety",
+        description="Human safety rating (0=harmful, 10=completely safe)",
+        unit="score",
+        min_value=9.0,
+        category="deterrent",
+        severity="hard",
+        notes="Must never injure people. Score 9+ required (minor startle acceptable).",
+    ),
+    Constraint(
+        name="livestock_safety",
+        description="Livestock safety rating (0=harmful, 10=completely safe)",
+        unit="score",
+        min_value=8.0,
+        category="deterrent",
+        severity="hard",
+        notes="Must not harm or unduly stress farm animals.",
+    ),
+
+    # Maintenance & Operations
+    Constraint(
+        name="maintenance_visits_per_year",
+        description="Maximum maintenance visits per year per 50-acre block",
+        unit="visits/year",
+        max_value=4.0,
+        category="operations",
         severity="soft",
-        notes="Cellular connectivity + replacement parts budget.",
-    ),
-
-    # Compute
-    Constraint(
-        name="jetson_tdp",
-        description="NVIDIA Jetson thermal design power limit",
-        unit="W",
-        max_value=15.0,
-        category="compute",
-        severity="hard",
-        notes="Jetson Orin Nano: 7-15W configurable. Must run within selected power mode.",
+        notes="Quarterly maximum. Farmers are busy during growing season.",
     ),
     Constraint(
-        name="inference_fps",
-        description="Minimum AI inference framerate",
-        unit="fps",
+        name="system_lifetime",
+        description="Minimum system operational lifetime",
+        unit="years",
         min_value=5.0,
-        category="compute",
+        category="operations",
         severity="hard",
-        notes="5 FPS minimum for reliable tracking; 10+ FPS preferred.",
-    ),
-
-    # Acoustic Deterrent
-    Constraint(
-        name="deterrent_spl",
-        description="Sound pressure level at target distance",
-        unit="dB SPL @ 100m",
-        min_value=70.0,
-        category="deterrent",
-        severity="soft",
-        notes="Must be audible and startling to deer at 100m.",
-    ),
-    Constraint(
-        name="deterrent_frequency_range",
-        description="Acoustic deterrent frequency range",
-        unit="Hz",
-        min_value=200.0,
-        max_value=8000.0,
-        category="deterrent",
-        severity="soft",
-        notes="Deer hearing sensitivity range. Below 200Hz less effective, above 8kHz attenuates rapidly outdoors.",
+        notes="Required for amortization model. 5-year minimum.",
     ),
 ]
 
@@ -264,7 +280,7 @@ def validate_solution(proposed: Dict[str, float]) -> List[ValidationResult]:
             if c.max_value is not None:
                 pct = ((c.max_value - value) / c.max_value) * 100
                 margin = f" (margin: {pct:.0f}%)"
-            elif c.min_value is not None:
+            elif c.min_value is not None and c.min_value != 0:
                 pct = ((value - c.min_value) / c.min_value) * 100
                 margin = f" (margin: +{pct:.0f}%)"
             status = "PASS"
@@ -291,6 +307,7 @@ def format_results(results: List[ValidationResult]) -> str:
     lines = [
         "=" * 70,
         "FIELD SHIELD CONSTRAINT VALIDATION REPORT",
+        "Target: $100/acre/year | 50-acre blocks | Scalable",
         "=" * 70,
         "",
     ]
@@ -311,6 +328,21 @@ def format_results(results: List[ValidationResult]) -> str:
     lines.append(f"   ({passes} pass, {hard_fails} fail, {soft_warns} warn, {skips} not specified)")
     lines.append("")
 
+    # Per-acre cost check (derived)
+    capex = next((r for r in results if r.constraint_name == "capital_cost_50acre" and r.proposed_value), None)
+    opex = next((r for r in results if r.constraint_name == "annual_operating_cost" and r.proposed_value), None)
+    lifetime = next((r for r in results if r.constraint_name == "system_lifetime" and r.proposed_value), None)
+
+    if capex and opex and lifetime and lifetime.proposed_value > 0:
+        annual_total = (capex.proposed_value / lifetime.proposed_value) + opex.proposed_value
+        per_acre = annual_total / 50.0
+        status_icon = "✅" if per_acre <= 100 else "❌"
+        lines.append(f"\n--- DERIVED: PER-ACRE ECONOMICS ---")
+        lines.append(f"  Capex amortized: ${capex.proposed_value / lifetime.proposed_value:,.0f}/year")
+        lines.append(f"  + Opex: ${opex.proposed_value:,.0f}/year")
+        lines.append(f"  = Total annual: ${annual_total:,.0f}/year for 50 acres")
+        lines.append(f"  {status_icon} Per-acre cost: ${per_acre:,.0f}/acre/year (target: ≤$100)")
+
     # Group by category
     categories = {}
     for r in results:
@@ -330,7 +362,8 @@ def format_results(results: List[ValidationResult]) -> str:
 def show_constraints() -> str:
     """Display all constraints in a readable format."""
     lines = [
-        "FIELD SHIELD HARD ENGINEERING CONSTRAINTS",
+        "FIELD SHIELD CONSTRAINTS — NOVEL CONCEPT RESEARCH (v2)",
+        "Target: $100/acre/year | 50-acre blocks | Scalable | Anti-habituation",
         "=" * 60,
     ]
 
@@ -372,8 +405,8 @@ def generate_template() -> str:
 def main():
     if len(sys.argv) < 2:
         print("""
-Field Shield Constraint Validator
-===================================
+Field Shield Constraint Validator (v2 — Novel Concept Research)
+================================================================
 
 Commands:
   constraints       Show all constraints with limits and notes
@@ -381,13 +414,17 @@ Commands:
   check <file.json> Validate a proposal from a JSON file
   validate          Interactive validation mode
 
+Target: $100/acre/year | 50-acre blocks | Scalable | Anti-habituation
+
 Example JSON:
   {
-    "average_power": 12.5,
-    "total_weight": 22.0,
-    "detection_range": 250.0,
-    "response_time": 1.5,
-    "unit_bom_cost": 2200.0
+    "cost_per_acre_year": 85.0,
+    "block_size": 50.0,
+    "capital_cost_50acre": 12000.0,
+    "annual_operating_cost": 1500.0,
+    "coverage_completeness": 95.0,
+    "anti_habituation_months": 6.0,
+    "system_lifetime": 5.0
   }
         """)
         return
