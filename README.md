@@ -1,195 +1,63 @@
-# TRIZ Agents
+# Field Shield TRIZ Innovation Engine
 
-Multi-agent LLM workflow that applies the **TRIZ** methodology to complex engineering problems.
-Implements a supervisor-routed LangGraph of specialized agents (Project Manager, TRIZ Specialist, Mechanical/Electrical/Control/Safety Engineers, Operations & Documentation), plus TRIZ-specific tools (features list, contradiction matrix, inventive principles) and an optional TRIZ RAG.
+A Claude Desktop skill for TRIZ-based novel concept research applied to scalable wildlife deterrence.
 
-> The accompanying paper see: [TRIZ Agents: A Multi-Agent LLM Approach for TRIZ-Based Innovation](https://arxiv.org/abs/2506.18783)
+## What This Does
 
----
+This system orchestrates structured innovation sessions using the TRIZ (Theory of Inventive Problem Solving) methodology to invent new wildlife deterrence concepts for commercial agriculture. It combines cross-domain research, systematic contradiction analysis, and multi-specialist validation to generate novel, economically viable solutions.
 
-## ✨ What’s inside
+**Target**: $100/acre/year at 50-acre block scale, with built-in anti-habituation.
 
-* **Agent workflow (LangGraph):** Supervisor (Project Manager) routes work among domain agents, tool calls are separate tool nodes.
-* **LLM providers via LangChain:** OpenAI (GPT-4o, o\*), Google Gemini (1.5/2.5), DeepSeek, xAI (Grok). Easy to add more.
-* **TRIZ tools:**
+## How It Works
 
-  * 39 features list
-  * Contradiction matrix → suggested inventive principles
-  * Inventive principles lookup
-  * Optional TRIZ **RAG** over PDFs (Chroma + OpenAI Embeddings)
-* **Experiments:** One-shot or batch runs, JSON/Markdown artifacts.
-* **Evaluation:** Multi-judge scoring (clarity, coherence, coverage, novelty, feasibility, TRIZ-adherence, expert-alignment).
-* **Notebook:** `quickstart.ipynb` for end-to-end runs + graph visualization.
+The system runs as a Claude Desktop (Cowork mode) skill. Claude acts as the Project Manager, dispatching 14 specialist subagents through a structured 5-phase workflow:
 
----
+1. **Problem Framing** — TRIZ contradiction analysis + cross-domain research
+2. **Concept Development** — Domain engineers develop novel solution families
+3. **Validation** — Economic, safety, and constraint verification
+4. **Documentation** — Innovation report + IP trail
+5. **Delivery** — All artifacts saved to session directory
 
-## 🧰 Requirements & install
+Human-in-the-loop gates at three decision points ensure the inventor retains control over the creative direction.
 
-### 1) Python deps
+## Getting Started
 
-Use our curated `requirements.txt`:
+1. Open Claude Desktop with this folder selected
+2. Describe your challenge (e.g., "Research novel concepts for deer deterrence at $100/acre/year")
+3. Claude reads the skill files and orchestrates the session
+4. Approve at each gate: contradictions, concepts, and final report
+5. Receive deliverables: innovation report + IP documentation
 
-```bash
-pip install -r requirements.txt
-```
-```bash
-pip install -e .
-```
-
-Notes:
-
-* On Windows, `faiss-cpu` is skipped; Chroma will still work.
-* For local graph rendering, also install:
-
-  ```bash
-  pip install graphviz pygraphviz  # or 'pydot'
-  # and install Graphviz system binaries via apt/brew/choco
-  ```
-
-### 2) Environment variables (`.env`)
-
-Create a `.env` in repo root (copy from `.env.example`):
-
-```env
-# Providers (fill only what you need)
-OPENAI_API_KEY=sk-...
-GOOGLE_API_KEY=AIza...
-XAI_API_KEY=xai-...
-DEEPSEEK_API_KEY=sk-deepseek-...
-
-# LangChain Hub (for pulling prompts used by prompt_templates.py)
-LANGCHAIN_API_KEY=ls_...
-
-# Tavily (web search tool)
-TAVILY_API_KEY=tvly-...
-```
-
-The notebook and modules use `python-dotenv` to load this automatically.
-
----
-
-## 🚀 Quickstart (Notebook)
-
-Open **`notebooks/quickstart.ipynb`** and run the cells:
-
-* Installs (optional)
-* Loads `.env`
-* Lets you pick the **agent model** and **evaluator models**
-* **Visualizes** the LangGraph (offline Graphviz first; Mermaid fallback)
-* Runs a full **TRIZ workflow** on a gantry crane problem
-* Saves a JSON artifact under `experiments/` and a Markdown summary
-* Runs **multi-judge evaluation** (default: `expert_solution` metric)
-
-If Mermaid remote rendering fails (HTTP 502), the notebook falls back to **local Graphviz** or writes Mermaid source (`workflow.mmd`) with CLI instructions (`mmdc`) to render offline.
-
----
-
-## 🔧 CLI-style usage (from Python)
-
-```python
-from triz_agents import create_workflow_app, run_experiment, run_multi_judge_evaluation
-
-# 1) Run an experiment
-res = run_experiment(
-    model_name="gpt-4o",
-    thread_id="gantry-01",
-    temperature=0.0,
-    out_dir="experiments",
-)
-
-# 2) Evaluate with multiple judges
-from pathlib import Path
-prediction_text = Path("gpt-4o_gantry_*.md").read_text(encoding="utf-8")  # or your artifact path
-report = run_multi_judge_evaluation(
-    evaluator_models=["o1", "grok-3", "gemini-2.5-pro"],
-    input_problem="(the gantry crane problem text...)",
-    prediction=prediction_text,
-    metrics=["expert_solution"],   # add clarity, coherence, etc.
-)
-```
-
----
-
-## 🧱 TRIZ data files
-
-`src/triz_agents/tools/triz_tools.py` expects:
-
-* `src/triz_agents/tools/sources/triz_matrix.xls`
-* `src/triz_agents/tools/sources/triz_principles.json`
-* `src/triz_agents/tools/sources/triz_features.txt`
-
-Place your files there or update the paths in `triz_tools.py`.
-The contradiction matrix is read via Pandas; column/index names are normalized to lowercase/stripped.
-
----
-
-## 📚 RAG (optional)
-
-`tools/rag_tools.py` can build a small TRIZ RAG over PDFs:
-
-* Put your PDFs under `./triz_books/` (or edit the directory).
-* Requires `chromadb`, `OpenAIEmbeddings` (so set `OPENAI_API_KEY`).
-* The tool function is `rag_triz_tool(question: str)`.
-
-> If you don’t plan to use RAG immediately, the imports are safe; the tool won’t run until invoked.
-
----
-
-## 🧪 Experiments & evaluation
-
-* **Run single/batch experiments:** `experiments.py` exposes `run_experiment` and `run_batch`.
-* **Artifacts:** JSON (steps + metadata) and a Markdown summary for evaluation pipelines.
-* **Evaluation:** `evaluation.py` offers multi-judge scoring across metrics (default is just **expert\_solution**). Judges are any models supported by `llm.get_llm()`.
-
-Tip: Use **low temperature** for judges (the code defaults to deterministic settings).
-
----
-
-## 🧩 LLM providers
-
-`llm.py` maps friendly model names → provider classes:
-
-* OpenAI: `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-mini`, `o1`, `o3`, `o4-mini`
-* Google: `gemini-1.5-flash`, `gemini-1.5-pro`, `gemini-2.5-flash`, `gemini-2.5-pro`
-* DeepSeek: `deepseek-chat`
-* xAI: `grok-3`, `grok-3-mini`
-
-You can add your own by extending `MODEL_PROVIDER_MAP`.
-
----
-
-## 🐞 Troubleshooting
-
-* **Mermaid 502** when rendering the graph:
-
-  * The notebook now prefers **offline Graphviz** (`draw_png`/`draw_svg`) and only falls back to Mermaid’s web renderer if needed.
-  * Install `graphviz` + `pygraphviz` (or `pydot`) and system binaries.
-* **TRIZ tools can’t find files**:
-
-  * Check paths under `src/triz_agents/tools/sources/`.
-* **RAG fails**:
-
-  * Ensure `OPENAI_API_KEY` is set and Chroma is installed.
-  * If on Windows without FAISS, Chroma will still work (disk/vector backends).
-
----
-
-## 📝 Citing
-
-If you use this project, please cite the paper:
+## Repository Structure
 
 ```
-@article{szczepanik2025triz,
-  title={TRIZ Agents: A Multi-Agent LLM Approach for TRIZ-Based Innovation},
-  author={Szczepanik, Kamil and Chudziak, Jaros{\'L} and others},
-  journal={arXiv preprint arXiv:2506.18783},
-  year={2025}
-}
+field-shield-triz/
+├── SKILL.md                      # Skill entry point and workflow guide
+├── AGENT_TEAM_ARCHITECTURE.md    # Agent team design and dispatch matrix
+├── field_shield_context/         # Domain context files
+│   ├── system_overview.md
+│   ├── hard_constraints.md
+│   └── known_contradictions.md
+├── prompts/                      # 14 specialist agent prompts
+├── templates/                    # Report and IP documentation templates
+└── tools/
+    ├── triz_toolkit.py           # TRIZ contradiction matrix + principles CLI
+    ├── constraint_validator.py   # Hard constraint validation CLI
+    └── data/                     # TRIZ reference data (matrix, principles, features)
 ```
 
----
+## Key Design Decisions
 
-## 📄 License
+- **Architecture-agnostic**: Not locked to any hardware platform. Novel concepts are evaluated on their merits.
+- **Economics-first**: Every concept must pass the $100/acre/year gate before detailed engineering.
+- **Anti-habituation focus**: The primary technical challenge — existing deterrents fail because wildlife habituates in 2-4 weeks.
+- **Mains power available**: Commercial farms have grid power, removing the solar/battery constraint.
+- **Cross-domain research**: Solutions draw inspiration from military/security, biomimicry, behavioral science, and infrastructure systems.
 
-MIT
+## Acknowledgments
 
+This project was inspired by the [TRIZ Agents](https://github.com/Szczepanik/triz-agents) framework by Szczepanik et al. ([arXiv:2506.18783](https://arxiv.org/abs/2506.18783)), which demonstrated multi-agent TRIZ methodology using LangGraph. The Field Shield implementation adapts the core TRIZ approach to a Claude Desktop-native architecture.
+
+## Author
+
+Dylan Baribeault — [Field Shield](https://fieldshield.io)

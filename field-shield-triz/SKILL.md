@@ -3,7 +3,7 @@
 ## Overview
 This skill orchestrates TRIZ-based novel concept research sessions for the Field Shield scalable wildlife deterrence platform. The primary mission is to **invent new, novel deterrent concepts** that meet a $100/acre/year cost target at 50-acre block scale, with built-in anti-habituation.
 
-The system replaces a LangGraph/Python multi-agent system with a Claude Desktop-native architecture using subagent Task dispatching, built-in web research, HITL (Human-in-the-Loop) gates via AskUserQuestion, and local TRIZ tooling.
+The system uses a Claude Desktop-native architecture with subagent Task dispatching, built-in web research, HITL (Human-in-the-Loop) gates via AskUserQuestion, and local TRIZ tooling. Inspired by the TRIZ Agents project (Szczepanik et al.).
 
 ## Architecture: Supervisor-Dispatched Agent Team
 Claude acts as the **Project Manager (orchestrator)**, dispatching work to specialist subagents via the Task tool.
@@ -234,15 +234,10 @@ sessions/YYYY-MM-DD-<challenge>/
     └── concept_3.json
 ```
 
-## Key Differences from v1 (Original Architecture)
+## Design Principles
 
-| Feature | v1 (Solar/Battery/Acoustic) | v2 (Novel Concept Research) |
-|---------|---------------------------|---------------------------|
-| Goal | Optimize existing architecture | Invent new deterrent concepts |
-| Cost target | $2,500 BOM per unit | $100/acre/year for 50-acre blocks |
-| Power | Solar/battery constrained (≤15W) | Mains power available |
-| Deterrent | Acoustic (habituates in 2-4 weeks) | Novel, anti-habituation required |
-| Scale | Single unit, single field | 50-acre blocks, scalable to 100s |
-| Research | Engineering optimization | Cross-domain innovation scouting |
-| Phase 1 | TRIZ only | TRIZ + cross-domain research |
-| Validation | 19 hardware constraints | 21 economic + performance constraints |
+- **Invention over optimization**: The goal is to discover fundamentally new deterrent approaches, not refine existing ones
+- **Economics-first validation**: Every concept must pass the $100/acre/year gate before detailed engineering
+- **Cross-domain inspiration**: Phase 1 research spans biomimicry, military/security, behavioral science, and infrastructure systems
+- **Anti-habituation as primary differentiator**: Existing deterrents fail because wildlife habituates in 2-4 weeks — novel concepts must resist this
+- **Architecture-agnostic**: Not locked to any hardware platform — mains power available, concepts evaluated on their merits

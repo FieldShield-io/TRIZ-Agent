@@ -3,7 +3,7 @@
 TRIZ Toolkit for Field Shield — Claude Desktop Optimized
 =========================================================
 Standalone TRIZ tools that can be called from the command line.
-Replaces the LangChain tool wrappers with direct CLI interfaces.
+Direct CLI interfaces for TRIZ analysis — no external dependencies required.
 
 Usage:
     python triz_toolkit.py features                          # List 39 TRIZ features
@@ -66,18 +66,36 @@ FEATURES = [
     "Productivity",
 ]
 
-# Field Shield-specific feature mappings for quick reference
+# Field Shield v2 — Novel Concept Research challenge mappings
+# These map high-level Field Shield design tensions to TRIZ feature pairs
+# for quick contradiction matrix lookups.
+#
+# Primary tensions: economics vs. performance, anti-habituation vs. simplicity,
+# scalability vs. coverage quality
 FIELD_SHIELD_FEATURE_MAP = {
-    "detection_range": ("Measurement accuracy", "Weight of stationary object"),
-    "pan_tilt_speed": ("Speed", "Use of energy by moving object"),
-    "deterrent_power": ("Force (Intensity)", "Loss of Energy"),
+    # Economics–Performance Nexus
+    "cost_vs_coverage": ("Area of stationary object", "Ease of manufacture"),
+    "cost_vs_detection": ("Measurement accuracy", "Ease of manufacture"),
+    "cost_vs_deterrent_strength": ("Force (Intensity)", "Ease of manufacture"),
+    "scalability": ("Area of stationary object", "Device complexity"),
+
+    # Anti-Habituation Challenge
+    "anti_habituation": ("Adaptability or versatility", "Device complexity"),
+    "deterrent_unpredictability": ("Adaptability or versatility", "Reliability"),
+    "multi_modal_deterrence": ("Force (Intensity)", "Device complexity"),
+    "response_adaptation": ("Extent of automation", "Loss of Information"),
+
+    # Detection & Response
+    "detection_range": ("Measurement accuracy", "Loss of Energy"),
+    "response_time": ("Speed", "Measurement accuracy"),
+    "false_positive_rate": ("Measurement accuracy", "Productivity"),
+    "night_detection": ("Difficulty of detecting and measuring", "Use of energy by stationary object"),
+
+    # Field Deployment
+    "installation_simplicity": ("Ease of operation", "Area of stationary object"),
+    "maintenance_burden": ("Ease of repair", "Extent of automation"),
     "weatherproofing": ("Reliability", "Temperature"),
-    "ai_throughput": ("Productivity", "Temperature"),
-    "autonomy": ("Extent of automation", "Ease of repair"),
-    "power_budget": ("Use of energy by stationary object", "Reliability"),
-    "thermal_management": ("Temperature", "Device complexity"),
-    "weight": ("Weight of stationary object", "Strength"),
-    "maintainability": ("Ease of repair", "Device complexity"),
+    "infrastructure_reuse": ("Ease of manufacture", "Adaptability or versatility"),
 }
 
 

@@ -22,19 +22,9 @@ This document describes the agent team assembled to implement the Field Shield T
 
 ---
 
-## Architectural Translation
+## Inspiration
 
-### Original (LangGraph) → Claude Desktop Optimized
-
-| Original (LangGraph) | Claude Desktop Optimized | Advantage |
-|---|---|---|
-| LangGraph `StateGraph` orchestration | Claude main thread as Project Manager | No Python runtime dependency, natural conversation flow |
-| `create_agent_node()` + `call_agent_model()` | `Task` tool subagent dispatch | Built-in parallelism, automatic context isolation |
-| LangChain `@tool` wrappers for TRIZ | Python CLI scripts via `Bash` tool | Simpler, no LangChain dependency, directly testable |
-| `TavilySearch` LangChain tool | Built-in `WebSearch` / `WebFetch` tools | Native integration, no API key management |
-| No HITL gates | `AskUserQuestion` tool at 3 gate points | Built-in human approval workflow |
-| `hub.pull()` external prompts | Local markdown files in `prompts/` | Full control, no LangChain Hub dependency |
-| `delete_messages` context management | Subagent natural isolation via Task tool | Each agent runs in its own context window |
+This system was inspired by the [TRIZ Agents](https://github.com/Szczepanik/triz-agents) project (Szczepanik et al., [arXiv:2506.18783](https://arxiv.org/abs/2506.18783), MIT License), which demonstrated multi-agent TRIZ methodology using LangGraph. The Field Shield implementation adapts the core TRIZ approach to a Claude Desktop-native architecture with subagent dispatching, built-in web research, and human-in-the-loop gates.
 
 ---
 
